@@ -7,9 +7,9 @@ public class ValidationController : Controller
 {
     
     [AcceptVerbs("GET", "POST")]
-    public bool CheckDate(DateTime birthDate)
+    public bool CheckDate(DateTime BirthDate)
     {
-        if (birthDate > DateTime.Now || birthDate < DateTime.Now.AddYears(-18))
+        if (BirthDate > DateTime.Now || BirthDate > DateTime.Now.AddYears(-18))
         {
             return false;
         }

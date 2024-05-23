@@ -29,6 +29,6 @@ public class RegisterViewModel
     [Required(ErrorMessage = "Имя пользователя обязательно к заполнению")]
     public string NickName { get; set; }
     [Required(ErrorMessage = "Дата рождения пользователя обязательна к заполнению")]
-    [Remote(action: "CheckDate", controller: "Validation", ErrorMessage = "Пользовател должен быть старше 18 лет")]
+    [Remote(action: "CheckDate", controller: "Validation", ErrorMessage = "Пользователь должен быть старше 18 лет")]
     public DateTime BirthDate { get; set; }
 }
