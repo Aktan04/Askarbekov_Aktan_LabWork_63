@@ -1,0 +1,43 @@
+@model User
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="profile-header text-center mb-4">
+                <div class="profile-avatar-container">
+                    <img src="@Model.Avatar" class="profile-avatar" alt="Аватар пользователя" />
+                </div>
+                <h2 class="profile-name mt-3" id="profileNickName">@Model.NickName</h2>
+                <p class="profile-email"><i class="fas fa-envelope"></i> @Model.Email</p>
+            </div>
+            <div class="card profile-details">
+                <div class="card-body">
+                    <h5 class="card-title">Информация о пользователе</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Никнейм:</strong> <span id="userNickName">@Model.NickName</span></li>
+                        <li class="list-group-item"><strong>Дата рождения:</strong> <span id="userBirthdate">@Model.Birthdate.ToShortDateString()</span></li>
+                        <li class="list-group-item"><strong>Количество сообщений</strong> <span >@(Model.Messages?.Count ?? 0) </span></li>
+
+                    </ul>
+                    <button class="btn btn-primary mt-3 edit-profile-btn"
+                            data-user-id="@Model.Id"
+                            data-user-nickname="@Model.NickName"
+                            data-user-birthdate="@Model.Birthdate.ToString("yyyy-MM-dd")"
+                            data-user-avatar="@Model.Avatar"
+                            data-is-admin="false">Редактировать профиль</button>
+                    @if (User.IsInRole("admin") && @Model.Id != 1)
+                    {
+                        <button class="btn btn-light mx-3 text-danger" id="block" data-user-id="@Model.Id" data-is-blocked="@Model.IsBlocked">@Model.IsBlocked == true ? "Unblock" : "Block"</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ @{ Html.RenderPartial("_EditPartial", new User()); }

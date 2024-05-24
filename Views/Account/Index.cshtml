@@ -1,0 +1,52 @@
+@model List<User>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Список пользователей</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Avatar</th>
+            <th>UserName</th>
+            <th>Email</th>
+            <th>NickName</th>
+            <th>Birthdate</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(user.Avatar))
+                    {
+                        <img src="@user.Avatar" alt="Avatar" width="50" height="50" />
+                    }
+                    else
+                    {
+                        <span>No Avatar</span>
+                    }
+                </td>
+                <td><a asp-action="Profile" asp-controller="Account" asp-route-userId="@user.Id">@user.UserName</a></td>
+                <td>@user.Email</td>
+                <td>@user.NickName</td>
+                <td>@user.Birthdate.ToShortDateString()</td>
+                <td>
+                    <button class="btn btn-primary mt-3 edit-profile-btn"
+                            data-user-id="@user.Id"
+                            data-user-nickname="@user.NickName"
+                            data-user-birthdate="@user.Birthdate.ToString("yyyy-MM-dd")"
+                            data-user-avatar="@user.Avatar"
+                            data-is-admin="true">Редактировать профиль
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@Html.Partial("_EditPartial", new User())
