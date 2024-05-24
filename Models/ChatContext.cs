@@ -9,4 +9,5 @@ public class ChatContext : IdentityDbContext<User, IdentityRole<int>, int>
     public ChatContext(DbContextOptions<ChatContext> options) : base(options){}
     
     public DbSet<User> Users { get; set; }
+    public DbSet<Message> Messages { get; set; }
 }
