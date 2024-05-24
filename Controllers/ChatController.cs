@@ -66,4 +66,18 @@ public class ChatController : Controller
         messages.Reverse();
         return PartialView("_MessagesPartial", messages);
     }
+    
+    [Authorize(Roles = "admin")]
+    public async Task<IActionResult> DeleteMessage(int messageId)
+    {
+        var message = await _context.Messages.FindAsync(messageId);
+        if (message == null)
+        {
+            return NotFound(new { success = false, error = "Сообщение не найдено" });
+        }
+
+        _context.Messages.Remove(message);
+        await _context.SaveChangesAsync();
+        return RedirectToAction("Index");
+    }
 }
