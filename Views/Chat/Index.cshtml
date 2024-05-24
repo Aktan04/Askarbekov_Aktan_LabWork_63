@@ -1,0 +1,24 @@
+@model List<Message>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="chat-container">
+    <div id="chat-window" class="chat-window">
+        @foreach (var message in Model)
+        {
+            @Html.Partial("_MessagePartial", message)
+        }
+    </div>
+
+    <div class="message-input">
+        <input type="text" id="messageText" placeholder="Введите сообщение..." />
+        <div id="errorText" class="text-danger mt-2" style="display:none;">Превышение допустимого колва символов</div>
+        <button id="sendMessage" class="btn btn-primary" disabled>Отправить</button>
+        <div id="charCount" class="mt-2"></div>
+    </div>
+    <input type="hidden" id="sendMessageUrl" value="@Url.Action("SendMessage", "Chat")" />
+    <input type="hidden" id="getMessagesUrl" value="@Url.Action("GetMessages", "Chat")" />
+</div>

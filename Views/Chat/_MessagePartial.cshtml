@@ -1,0 +1,14 @@
+@model Message
+
+<div class="message-container @(Model.UserId == ViewBag.TargetUser ? "my-message-container" : "other-message-container")">
+    <div class="message @(Model.UserId == ViewBag.TargetUser ? "my-message" : "other-message")">
+        <div class="avatar">
+            <img src="@Model.User.Avatar" alt="Аватар" class="avatar-img">
+        </div>
+        <div class="message-content">
+            <strong><a asp-action="Profile" asp-controller="Account" asp-route-userId="@Model.UserId">@Model.User.NickName</a></strong>
+            <p>@Model.Text</p>
+            <small>@Model.DateOfSend.ToString("dd.MM.yyyy HH:mm:ss")</small>
+        </div>
+    </div>
+</div>
