@@ -16,7 +16,7 @@ public class RegisterViewModel
     
     [Required(ErrorMessage = "Не указан пароль")]
     [MinLength(3, ErrorMessage = "Пароль должен содержать не менее 6 символов")]
-    /*[RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$", ErrorMessage = "Пароль должен содержать минимум 1 цифру, больше 8 символов и одну букву в верхнем регистре")]*/
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$", ErrorMessage = "Пароль должен содержать минимум 1 цифру, больше 8 символов и одну букву в верхнем регистре")]
     [DataType(DataType.Password)]
     public string Password { get; set; }
     
