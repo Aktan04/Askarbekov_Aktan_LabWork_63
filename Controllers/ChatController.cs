@@ -19,6 +19,8 @@ public class ChatController : Controller
     [Authorize]
     public async Task<IActionResult> Index()
     {
+        int? userId = Convert.ToInt32(_userManager.GetUserId(User));
+        ViewBag.TargetUser = userId;
         var messages = await _context.Messages
             .Include(m => m.User)
             .OrderByDescending(m => m.DateOfSend)

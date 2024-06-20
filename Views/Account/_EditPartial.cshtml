@@ -1,4 +1,3 @@
-
 @model User
 
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
@@ -19,6 +18,16 @@
                         <span class="text-danger" id="editNickNameValidation"></span>
                     </div>
                     <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="Email" value="@Model.Email" />
+                        <span class="text-danger" id="editEmailValidation"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserName" class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-control" id="editUserName" name="UserName" value="@Model.UserName" />
+                        <span class="text-danger" id="editUserNameValidation"></span>
+                    </div>
+                    <div class="mb-3">
                         <label for="editBirthdate" class="form-label">Дата рождения</label>
                         <input type="date" class="form-control" id="editBirthdate" name="Birthdate" value="@Model.Birthdate" />
                         <span class="text-danger" id="editBirthdateValidation"></span>
@@ -29,9 +38,9 @@
                         <span class="text-danger" id="editImageFileValidation"></span>
                     </div>
                     <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                    <div class="text-danger" id="editProfileError"></div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-

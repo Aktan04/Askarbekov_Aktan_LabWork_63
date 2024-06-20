@@ -27,10 +27,11 @@ public class AccountController : Controller
     {
         if (userId != null)
         {
-            var getUser = _context.Users.Include(u => u.Messages).FirstOrDefault(u => u.Id == userId);
+            var getUser = await _context.Users.Include(u => u.Messages).FirstOrDefaultAsync(u => u.Id == userId);
             return View(getUser);
         }
-        var user = await _userManager.GetUserAsync(User);
+        int? targetUserId = Convert.ToInt32(_userManager.GetUserId(User));
+        var user = await _context.Users.Include(u => u.Messages).FirstOrDefaultAsync(u => u.Id == targetUserId);
         if (user == null)
         {
             return NotFound("Пользователь не найден");
@@ -40,12 +41,23 @@ public class AccountController : Controller
     }
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> EditProfile(int userId, string nickName, DateTime birthdate, IFormFile imageFile, bool isAdmin)
+    public async Task<IActionResult> EditProfile(int userId, string nickName, string email, string userName, DateTime birthdate, IFormFile imageFile, bool isAdmin)
     {
-        var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        int? targetUserId = Convert.ToInt32(_userManager.GetUserId(User));
+        var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.Id == targetUserId);
+        if (User.IsInRole("admin"))
+        {
+             currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        }
         if (currentUser == null)
         {
             return NotFound(); 
+        }
+        if (_context.Users.Any(u => u.Email == email && u.Id != userId) || 
+            _context.Users.Any(u => u.UserName == userName && u.Id != userId))
+        {
+            ModelState.AddModelError(string.Empty, "Логин или Email уже существует");
+            return Json(new { success = false, error = "Логин или Email уже существует" });
         }
         try
         {
@@ -64,11 +76,19 @@ public class AccountController : Controller
                 currentUser.Avatar = "/images/" + fileName;
             }
             currentUser.NickName = nickName;
+            currentUser.Email = email;
+            currentUser.UserName = userName;
             currentUser.Birthdate = birthdate.AddHours(6).ToUniversalTime();
-
-            await _context.SaveChangesAsync();
-
-            return Json(new { success = true, user =  currentUser, isAdmin = isAdmin}); 
+            var result = await _userManager.UpdateAsync(currentUser);
+            if (result.Succeeded)
+            {
+                return Json(new { success = true, user =  currentUser, isAdmin = isAdmin}); 
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return Json(new { success = false, error = string.Join(", ", result.Errors.Select(e => e.Description)) });
         }
         catch (Exception ex)
         {

@@ -13,7 +13,7 @@
                     <img src="@Model.Avatar" class="profile-avatar" alt="Аватар пользователя" />
                 </div>
                 <h2 class="profile-name mt-3" id="profileNickName">@Model.NickName</h2>
-                <p class="profile-email"><i class="fas fa-envelope"></i> @Model.Email</p>
+                <p class="profile-email" id="profileEmail"><i class="fas fa-envelope"></i> @Model.Email</p>
             </div>
             <div class="card profile-details">
                 <div class="card-body">
@@ -26,6 +26,8 @@
                     </ul>
                     <button class="btn btn-primary mt-3 edit-profile-btn"
                             data-user-id="@Model.Id"
+                            data-user-email="@Model.Email"
+                            data-user-username="@Model.UserName"
                             data-user-nickname="@Model.NickName"
                             data-user-birthdate="@Model.Birthdate.ToString("yyyy-MM-dd")"
                             data-user-avatar="@Model.Avatar"
