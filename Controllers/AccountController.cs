@@ -93,6 +93,15 @@ public class AccountController : Controller
             var result = await _userManager.UpdateAsync(currentUser);
             if (result.Succeeded)
             {
+                string subject = "Изменение профиля";
+                string text = $"Привет, {currentUser.NickName}!\n\nВаш профиль был обновлен. Вот детали изменений:\n\n" +
+                              $"Логин: {currentUser.UserName}\n" +
+                              $"Email: {currentUser.Email}\n" +
+                              $"Дата рождения: {currentUser.Birthdate.ToLocalTime()}\n" +
+                              (imageFile != null ? "Аватар: изменен\n" : "") +
+                              (!string.IsNullOrEmpty(password) ? "Пароль: изменен\n" : "");
+                EmailService emailService = new EmailService();
+                emailService.SendEmail(currentUser.Email, subject, text);
                 return Json(new { success = true, user =  currentUser, isAdmin = isAdmin}); 
             }
             foreach (var error in result.Errors)

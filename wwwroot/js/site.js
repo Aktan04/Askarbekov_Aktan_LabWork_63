@@ -95,6 +95,10 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
+    function isValidEmail(email) {
+        let emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        return emailRegex.test(email);
+    }
     $('.edit-profile-btn').click(function () {
         let userId = $(this).data('user-id');
         let nickName = $(this).data('user-nickname');
@@ -145,6 +149,9 @@ $(document).ready(function () {
         if (!email) {
             $('#editEmailValidation').text('Email обязателен к заполнению');
             isValid = false;
+        }else if (!isValidEmail(email)) { 
+            $('#editEmailValidation').text('Некорректный формат Email');
+            isValid = false;
         }
 
         if (!userName) {
@@ -191,18 +198,23 @@ $(document).ready(function () {
                             $('.edit-profile-btn').data('user-birthdate', updatedUser.birthdate.toISOString().split('T')[0]);
                         } else {
                             let row = $('button[data-user-id="' + updatedUser.id + '"]').closest('tr');
-                            row.find('td').eq(3).text(updatedUser.nickName);
+                            row.find('td').eq(1).html('<a href="/Account/Profile?userId=' + updatedUser.id + '">' + updatedUser.userName + '</a>'); 
+                            row.find('td').eq(2).text(updatedUser.email); 
+                            row.find('td').eq(3).text(updatedUser.nickName); 
                             row.find('td').eq(4).text(new Date(updatedUser.birthdate).toLocaleDateString());
-                            row.find('td').eq(5).text(updatedUser.email);
-                            row.find('td').eq(6).text(updatedUser.userName);
+
                             if (updatedUser.avatar) {
-                                row.find('img').attr('src', updatedUser.avatar);
+                                row.find('img').attr('src', updatedUser.avatar); 
+                            } else {
+                                row.find('img').attr('src', 'default-avatar.png'); 
                             }
+
                             $('button[data-user-id="' + updatedUser.id + '"]').data('user-nickname', updatedUser.nickName);
                             $('button[data-user-id="' + updatedUser.id + '"]').data('user-email', updatedUser.email);
                             $('button[data-user-id="' + updatedUser.id + '"]').data('user-username', updatedUser.userName);
                             $('button[data-user-id="' + updatedUser.id + '"]').data('user-birthdate', updatedUser.birthdate.toISOString().split('T')[0]);
                         }
+
                     } else {
                         $('#editProfileError').text(response.error);
                     }

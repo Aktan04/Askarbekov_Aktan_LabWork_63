@@ -9,6 +9,7 @@ public class RegisterViewModel
     [Required(ErrorMessage = "Не указан Email")]
     [DataType(DataType.EmailAddress)]
     [EmailAddress(ErrorMessage = "Некорректный Email пользователя")]
+    [RegularExpression(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$", ErrorMessage = "Некорректный Email пользователя")]
     public string Email { get; set; }
     
     [Required(ErrorMessage = "Не указан логин пользователя")]
