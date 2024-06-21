@@ -257,6 +257,24 @@ $(document).ready(function () {
     updateBlockButton($('#block').data('is-blocked') === "True");
 });
 
+$(document).ready(function() {
+    $('#requestUserData').click(function() {
+        let userId = $(this).data('user-id');
+        let userEmail = $(this).data('user-email');
 
+        $.ajax({
+            url: '/Account/RequestUserData/',
+            type: 'POST',
+            data: { userId: userId, userEmail: userEmail },
+            success: function(response) {
+                let responseMessage = response.message;
+                alert(responseMessage);
+            },
+            error: function(error) {
+                alert('An error occurred while requesting user data.');
+            }
+        });
+    });
+});
 
 

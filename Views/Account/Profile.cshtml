@@ -36,6 +36,8 @@
                     {
                         <button class="btn btn-light mx-3 text-danger" id="block" data-user-id="@Model.Id" data-is-blocked="@Model.IsBlocked">@Model.IsBlocked == true ? "Unblock" : "Block"</button>
                     }
+                    <button class="btn btn-info mt-3" id="requestUserData" data-user-id="@Model.Id" data-user-email="@Model.Email">Запросить данные</button>
+
                 </div>
             </div>
         </div>

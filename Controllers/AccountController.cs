@@ -40,6 +40,26 @@ public class AccountController : Controller
 
         return View(user);
     }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> RequestUserData(int userId, string userEmail)
+    {
+        var user = await _context.Users.Include(u => u.Messages).FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+        {
+            return Json(new { success = false, message = "User not found." });
+        }
+        string subject = "Ваши личные данные";
+        string text = $"Привет {user.NickName},\n\n" +
+                      $"Здесь ваша личная информация:\n" +
+                      $"Никнейм: {user.NickName}\n" +
+                      $"Дата рождения: {user.Birthdate.ToShortDateString()}\n" +
+                      $"Ваше количество сообщений: {user.Messages?.Count ?? 0}\n";
+        EmailService emailService = new EmailService();
+        emailService.SendEmail(userEmail, subject, text);
+        return Json(new { success = true, message = "Success. User data has been sent to your email." });
+    }
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> EditProfile(int userId, string nickName, string email, string userName, DateTime birthdate, IFormFile imageFile, bool isAdmin, string password, string confirmPassword)
