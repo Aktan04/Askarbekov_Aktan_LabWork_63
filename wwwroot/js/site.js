@@ -125,6 +125,8 @@ $(document).ready(function () {
         $('#editEmailValidation').text('');
         $('#editUserNameValidation').text('');
         $('#editBirthdateValidation').text('');
+        $('#editPasswordValidation').text('');
+        $('#editConfirmPasswordValidation').text('');
         $('#editProfileError').text('');
 
         let isValid = true;
@@ -132,6 +134,8 @@ $(document).ready(function () {
         let email = $('#editEmail').val().trim();
         let userName = $('#editUserName').val().trim();
         let birthdate = $('#editBirthdate').val().trim();
+        let password = $('#editPassword').val().trim();
+        let confirmPassword = $('#editConfirmPassword').val().trim();
 
         if (!nickName) {
             $('#editNickNameValidation').text('Имя пользователя обязательно к заполнению');
@@ -152,6 +156,11 @@ $(document).ready(function () {
         let age = new Date().getFullYear() - birthDateObj.getFullYear();
         if (!birthdate || age < 18) {
             $('#editBirthdateValidation').text('Пользователь должен быть старше 18 лет');
+            isValid = false;
+        }
+
+        if (password != null && password !== confirmPassword) {
+            $('#editConfirmPasswordValidation').text('Пароли не совпадают');
             isValid = false;
         }
 

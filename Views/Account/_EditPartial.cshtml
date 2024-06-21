@@ -32,6 +32,16 @@
                         <input type="date" class="form-control" id="editBirthdate" name="Birthdate" value="@Model.Birthdate" />
                         <span class="text-danger" id="editBirthdateValidation"></span>
                     </div>
+                    <div class="mb-3">
+                        <label for="editPassword" class="form-label">Новый пароль</label>
+                        <input type="password" class="form-control" id="editPassword" name="Password" />
+                        <span class="text-danger" id="editPasswordValidation"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editConfirmPassword" class="form-label">Подтвердите пароль</label>
+                        <input type="password" class="form-control" id="editConfirmPassword" name="ConfirmPassword" />
+                        <span class="text-danger" id="editConfirmPasswordValidation"></span>
+                    </div>
                     <div class="form-group">
                         <label for="editImageFile">Изображение</label>
                         <input type="file" class="form-control" id="editImageFile" name="ImageFile" />

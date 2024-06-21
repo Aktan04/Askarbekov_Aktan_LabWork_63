@@ -41,42 +41,52 @@ public class AccountController : Controller
     }
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> EditProfile(int userId, string nickName, string email, string userName, DateTime birthdate, IFormFile imageFile, bool isAdmin)
+    public async Task<IActionResult> EditProfile(int userId, string nickName, string email, string userName, DateTime birthdate, IFormFile imageFile, bool isAdmin, string password, string confirmPassword)
     {
         int? targetUserId = Convert.ToInt32(_userManager.GetUserId(User));
         var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.Id == targetUserId);
         if (User.IsInRole("admin"))
         {
-             currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+         currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
         if (currentUser == null)
         {
             return NotFound(); 
         }
         if (_context.Users.Any(u => u.Email == email && u.Id != userId) || 
-            _context.Users.Any(u => u.UserName == userName && u.Id != userId))
+        _context.Users.Any(u => u.UserName == userName && u.Id != userId))
         {
             ModelState.AddModelError(string.Empty, "Логин или Email уже существует");
             return Json(new { success = false, error = "Логин или Email уже существует" });
+        }
+        if (!string.IsNullOrEmpty(password))
+        {
+            if (password != confirmPassword)
+            {
+              return Json(new { success = false, error = "Пароли не совпадают" });
+            }
+
+            currentUser.PasswordHash = password != null
+                ? _userManager.PasswordHasher.HashPassword(currentUser, password)
+                : currentUser.PasswordHash;
         }
         try
         {
             if (imageFile != null && imageFile.Length > 0)
             {
-                    
                 var uploadPath = Path.Combine(_hostEnvironment.WebRootPath, "images");
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
                 var fullPath = Path.Combine(uploadPath, fileName);
-                    
+                
                 using (var fileStream = new FileStream(fullPath, FileMode.Create))
                 {
                     await imageFile.CopyToAsync(fileStream);
                 }
-                    
+                
                 currentUser.Avatar = "/images/" + fileName;
             }
             currentUser.NickName = nickName;
-            currentUser.Email = email;
+            currentUser.Email = email; 
             currentUser.UserName = userName;
             currentUser.Birthdate = birthdate.AddHours(6).ToUniversalTime();
             var result = await _userManager.UpdateAsync(currentUser);
@@ -95,6 +105,7 @@ public class AccountController : Controller
             return Json(new { success = false, error = ex.Message }); 
         }
     }
+
     [Authorize(Roles = "admin")]
     public IActionResult Index()
     {
