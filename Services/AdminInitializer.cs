@@ -17,7 +17,7 @@ public class AdminInitializer
         }
         if (await _userManager.FindByNameAsync(adminEmail) == null)
         {
-            User admin = new User { Email = adminEmail, UserName = "admin", NickName = "admin", Birthdate = DateTime.Now.AddYears(-18).ToUniversalTime()};
+            User admin = new User { Email = adminEmail, UserName = "admin", NickName = "admin", Birthdate = DateTime.Now.AddYears(-18).ToUniversalTime(), EmailConfirmed = true};
             IdentityResult result = await _userManager.CreateAsync(admin, adminPassword);
             if (result.Succeeded)
                 await _userManager.AddToRoleAsync(admin, "admin");

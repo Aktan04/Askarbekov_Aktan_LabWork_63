@@ -258,6 +258,23 @@ $(document).ready(function () {
 });
 
 $(document).ready(function() {
+    $('#confirmEmail').click(function() {
+        let userEmail = $(this).data('user-email');
+
+        $.ajax({
+            url: '/Account/SendEmailConfirmation/',
+            type: 'POST',
+            data: { email: userEmail },
+            success: function(response) {
+                let responseMessageOfSendEmail = response.message;
+                alert(responseMessageOfSendEmail);
+            },
+            error: function(error) {
+                alert('Ошибка при отправке письма.');
+            }
+        });
+    });
+    
     $('#requestUserData').click(function() {
         let userId = $(this).data('user-id');
         let userEmail = $(this).data('user-email');

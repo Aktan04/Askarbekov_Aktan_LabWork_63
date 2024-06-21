@@ -16,8 +16,10 @@ builder.Services.AddDbContext<ChatContext>(options => options.UseNpgsql(connecti
         options.Password.RequireLowercase = false; 
         options.Password.RequireUppercase = false; 
         options.Password.RequireDigit = false; 
+        options.SignIn.RequireConfirmedAccount = true;
     })
-    .AddEntityFrameworkStores<ChatContext>();
+    .AddEntityFrameworkStores<ChatContext>()
+    .AddDefaultTokenProviders();
 var app = builder.Build();
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

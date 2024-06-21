@@ -18,10 +18,11 @@ public class EmailService
         message.From.Add(new MimeKit.MailboxAddress("Aktannski", from)); 
         message.To.Add(new MimeKit.MailboxAddress("User", to));
         message.Subject = subject;
-        message.Body = new MimeKit.TextPart("plain")
+        var bodyBuilder = new MimeKit.BodyBuilder
         {
-            Text = text
+            HtmlBody = text
         };
+        message.Body = bodyBuilder.ToMessageBody();
 
         using (var client = new MailKit.Net.Smtp.SmtpClient())
         {

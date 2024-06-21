@@ -1,3 +1,6 @@
+using System.Net;
+using System.Text.Encodings.Web;
+using System.Web;
 using AjaxChat.Models;
 using AjaxChat.Services;
 using AjaxChat.ViewModels;
@@ -38,6 +41,7 @@ public class AccountController : Controller
             return NotFound("Пользователь не найден");
         }
 
+        ViewBag.TargetUser = targetUserId;
         return View(user);
     }
 
@@ -45,6 +49,11 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> RequestUserData(int userId, string userEmail)
     {
+        int? targetUserId = Convert.ToInt32(_userManager.GetUserId(User));
+        if (targetUserId != userId)
+        {
+            return Json(new { success = false, message = "User dont have access." });
+        }
         var user = await _context.Users.Include(u => u.Messages).FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null)
         {
@@ -60,6 +69,52 @@ public class AccountController : Controller
         emailService.SendEmail(userEmail, subject, text);
         return Json(new { success = true, message = "Success. User data has been sent to your email." });
     }
+    
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> SendEmailConfirmation(string email)
+    {
+        int? targetUserId = Convert.ToInt32(_userManager.GetUserId(User));
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null || user.Id != targetUserId)
+        {
+            return Json(new { success = false, message = "Пользователь не найден или не имеет доступа." });
+        }
+
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = WebUtility.UrlEncode(token); 
+        var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = encodedToken }, Request.Scheme);
+
+        string subject = "Подтверждение email";
+        string text = $"Привет {user.NickName},\n\n" +
+                      $"Для подтверждения вашего email, пожалуйста, перейдите по следующей ссылке:\n" +
+                      $"{HtmlEncoder.Default.Encode(confirmationLink)}";
+
+        EmailService emailService = new EmailService();
+        emailService.SendEmail(email, subject, text);
+
+        return Json(new { success = true, message = "Письмо с подтверждением отправлено на ваш email." });
+    }
+    
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(int userId, string token)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            return NotFound("Пользователь не найден");
+        }
+        var decodedToken = WebUtility.UrlDecode(token);
+        var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Profile", "Account", new { userId = user.Id });
+        }
+
+        return BadRequest("Ошибка подтверждения email");
+    }
+    
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> EditProfile(int userId, string nickName, string email, string userName, DateTime birthdate, IFormFile imageFile, bool isAdmin, string password, string confirmPassword)
