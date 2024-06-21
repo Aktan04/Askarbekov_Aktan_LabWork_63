@@ -1,4 +1,5 @@
 using AjaxChat.Models;
+using AjaxChat.Services;
 using AjaxChat.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -250,6 +251,10 @@ public class AccountController : Controller
                 {
                     await _signInManager.SignInAsync(user, false);
                 }
+                string subject = "Добро пожаловать!";
+                string text = $"Привет, {user.NickName}!\n\nВаш логин: {user.UserName}\n\nВы можете посмотреть свой профиль по ссылке: {Url.Action("Profile", "Account", new { userId = user.Id }, Request.Scheme)}";
+                EmailService emailService = new EmailService();
+                emailService.SendEmail(user.Email, subject, text);
                 return RedirectToAction("Profile", "Account");
             }
 
